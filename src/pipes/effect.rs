@@ -34,8 +34,6 @@ pub struct PipesOptions {
     pub line_type: usize,
     #[builder(default = "1")]
     pub num_lines: usize,
-    #[builder(default = "0.3")]
-    pub pipe_type_change: f64,
     #[builder(default = "0.9")]
     pub cleanup_factor: f64,
 }
@@ -124,12 +122,7 @@ impl Pipe {
         buffer: &mut Buffer,
         width: usize,
         height: usize,
-        pipe_type_change: f64,
     ) {
-        if self.rng.random_bool(pipe_type_change) {
-            self.line_type = self.rng.random_range(0..LINE_CHARS.len());
-        }
-
         let edge = self.rng.random_range(0..4);
 
         let (pos, direction) = match edge {
@@ -190,11 +183,10 @@ impl Pipe {
         buffer: &mut Buffer,
         width: usize,
         height: usize,
-        pipe_type_change: f64,
     ) -> bool {
         // Check if reaches edge
         if self.next_location.0 >= width || self.next_location.1 >= height {
-            self.start_new_pipe(buffer, width, height, pipe_type_change);
+            self.start_new_pipe(buffer, width, height);
             return true;
         }
 
@@ -390,7 +382,6 @@ impl Pipes {
                 buffer,
                 width,
                 height,
-                self.options.pipe_type_change,
             );
         }
 
@@ -407,7 +398,6 @@ impl Pipes {
                 buffer,
                 width,
                 height,
-                self.options.pipe_type_change,
             );
         }
     }
